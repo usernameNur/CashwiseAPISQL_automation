@@ -1,21 +1,12 @@
 package pojo;
 
-public class Tag {
+public class Tag extends ResponseParent{
 
     private String name_tag;
     private String description;
     private String id;
     private String creation_date;
-    private String message;
-    private String [] details;
 
-    public String[] getDetails() {
-        return details;
-    }
-
-    public void setDetails(String[] details) {
-        this.details = details;
-    }
 
     public String getName_tag() {
         return name_tag;
@@ -47,14 +38,6 @@ public class Tag {
 
     public void setCreation_date(String creation_date) {
         this.creation_date = creation_date;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 
 
