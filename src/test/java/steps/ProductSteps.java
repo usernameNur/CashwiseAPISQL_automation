@@ -5,6 +5,7 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.testng.Assert;
 
@@ -16,6 +17,7 @@ public class ProductSteps {
     Response response;
     String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE3MTg1NDgzMTIsImlhdCI6MTcxNTk1NjMxMiwidXNlcm5hbWUiOiJxYXRlc3RlckBnbWFpbC5jb20ifQ.qEWtEi2XEK6GGxnMWZ3i98MiPrsfco9buqRe2sNVeHOAGVsbULtwfA39DogwEuPKP7jXIJtwaBBFd8kD6FwXiA";
     JSONObject requestBody = new JSONObject();
+
 
 
     @Given("base url {string}")
@@ -40,6 +42,9 @@ public class ProductSteps {
 
     @When("I send POST request")
     public void i_send_post_request() {
+        System.out.println("REQUESSSST");
+        System.out.println(requestBody.toString());
+
         response = request.body(requestBody.toString()).post();
     }
 
@@ -77,6 +82,33 @@ public class ProductSteps {
                 .delete("/products/" + id);
 
         Assert.assertEquals(response.statusCode(), 200);
+
+    }
+
+    @Given("I have {string} with product")
+    public void i_have_with_product(String products) {
+
+        Response response = RestAssured.given()
+                .baseUri("https://backend.cashwise.us/api/myaccount")
+                .contentType(ContentType.JSON)
+                .auth()
+                .oauth2(token)
+                .get("/products/1718");
+        System.out.println(response.prettyPrint());
+
+        JSONObject product = new JSONObject();
+        product.put("product_title", response.jsonPath().getString("product_title"));
+        product.put("product_id", Integer.parseInt(response.jsonPath().getString("product_id")));
+        product.put("count_of_product", 0);
+        product.put("product_price", Double.parseDouble(response.jsonPath().getString("product_price")));
+        product.put("service_type_id", Integer.parseInt(response.jsonPath().getString("service_type.service_type_id")));
+        product.put("category_id", Integer.parseInt(response.jsonPath().getString("category.category_id")));
+        product.put("product_description", response.jsonPath().getString("product_description"));
+
+        JSONArray arrayOfProducts = new JSONArray();
+        arrayOfProducts.put(product);
+
+        requestBody.put(products, arrayOfProducts);
 
     }
 }
