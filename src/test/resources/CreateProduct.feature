@@ -19,6 +19,8 @@ Feature: creates a product
     Then verify status code is 201
     And verify I have "product_title" with "pizza" in response body
     Then I delete the product
+    Then verify the product is not present in products list
+
 
 
 
@@ -37,9 +39,6 @@ Feature: creates a product
     Then verify status code is 201
     And verify I have "product_title" with null in response body
     Then I delete the product
-
-
-
 
 
 

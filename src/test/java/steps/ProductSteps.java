@@ -12,6 +12,8 @@ import org.testng.Assert;
 import static org.hamcrest.Matchers.equalTo;
 
 public class ProductSteps {
+    String id;
+
 
     RequestSpecification request;
     Response response;
@@ -42,7 +44,6 @@ public class ProductSteps {
 
     @When("I send POST request")
     public void i_send_post_request() {
-        System.out.println("REQUESSSST");
         System.out.println(requestBody.toString());
 
         response = request.body(requestBody.toString()).post();
@@ -71,7 +72,7 @@ public class ProductSteps {
     @Then("I delete the product")
     public void i_delete_the_product() {
 
-        String id = response.jsonPath().getString("product_id");
+        id = response.jsonPath().getString("product_id");
 
         response = RestAssured.given()
                 .baseUri("https://backend.cashwise.us/api/myaccount")
@@ -83,6 +84,22 @@ public class ProductSteps {
 
         Assert.assertEquals(response.statusCode(), 200);
 
+    }
+
+    @Then("verify the product is not present in products list")
+    public void verify_the_product_is_not_present_in_products_list() {
+        response = RestAssured.given()
+                .baseUri("https://backend.cashwise.us/api/myaccount/products/" + id)
+                .contentType(ContentType.JSON)
+                .auth()
+                .oauth2(token)
+                .when()
+                .get();
+
+        Assert.assertEquals(response.statusCode(), 500);
+
+        String message = response.jsonPath().getString("details");
+        Assert.assertTrue(message.contains("Product not found"));
     }
 
     @Given("I have {string} with product")
