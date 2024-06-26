@@ -1,5 +1,6 @@
 package steps;
 
+import com.sun.net.httpserver.Request;
 import io.cucumber.java.en.*;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -8,6 +9,12 @@ import io.restassured.specification.RequestSpecification;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.testng.Assert;
+import utilities.DBUtilities;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import static org.hamcrest.Matchers.equalTo;
 
@@ -17,7 +24,7 @@ public class ProductSteps {
 
     RequestSpecification request;
     Response response;
-    String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE3MTg1NDgzMTIsImlhdCI6MTcxNTk1NjMxMiwidXNlcm5hbWUiOiJxYXRlc3RlckBnbWFpbC5jb20ifQ.qEWtEi2XEK6GGxnMWZ3i98MiPrsfco9buqRe2sNVeHOAGVsbULtwfA39DogwEuPKP7jXIJtwaBBFd8kD6FwXiA";
+    String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE3MjE5MjE4MTgsImlhdCI6MTcxOTMyOTgxOCwidXNlcm5hbWUiOiJxYXRlc3RlckBnbWFpbC5jb20ifQ.fv8GVvDXSsaJ-VZTQHjXem6QcqWI5gerLvuDAsRPShkF8Xnu7pkSJF4hUp7W70sB6-JeJQu_Bo8OuFxyBWhYew";
     JSONObject requestBody = new JSONObject();
 
 
@@ -44,9 +51,17 @@ public class ProductSteps {
 
     @When("I send POST request")
     public void i_send_post_request() {
-        System.out.println(requestBody.toString());
-
         response = request.body(requestBody.toString()).post();
+    }
+
+    @When("I retrieve id for {string}")
+    public void i_retrieve_id_for(String id) {
+        this.id = response.jsonPath().getString(id);
+    }
+
+    @When("I send PUT request")
+    public void i_send_put_request() {
+      response = request.body(requestBody.toString()).put(id);
     }
 
     @Then("verify status code is {int}")
@@ -126,6 +141,29 @@ public class ProductSteps {
         arrayOfProducts.put(product);
 
         requestBody.put(products, arrayOfProducts);
+
+    }
+
+    @Then("I delete {string} category in database")
+    public void i_delete_category_in_database(String categoryTitle) throws SQLException {
+        /*
+        delete from products where category_id = ?; delete from categories where id = ?;
+         */
+        Connection connection = DBUtilities.getDBConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement("delete from products where category_id = ?; delete from categories where id = ?");
+        preparedStatement.setInt(1, Integer.parseInt(id));
+        preparedStatement.setInt(2, Integer.parseInt(id));
+        Assert.assertTrue(preparedStatement.executeUpdate() == 0);
+
+    }
+
+    @Then("verify {string} is deleted from database using GET request")
+    public void verify_is_deleted_from_database_using_get_request(String categoryTitle) {
+
+        response = request.get("/categories/" + id);
+
+        System.out.println(response.prettyPrint());
+
 
     }
 }

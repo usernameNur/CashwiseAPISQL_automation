@@ -32,5 +32,12 @@ Feature: creates a invoice
      And I have "discount" with "0" in request body
      And I have "sum_of_discount" with "0" in request body
      When I send POST request
+     And I retrieve id for "invoice_id"
      Then verify status code is 201
-     And verify I have "invoice_title" with "Lagman Invoice" in response body
+     And I have "date_of_creation" with "2024-06-04" in request body
+     And I have "end_date" with "2024-07-04" in request body
+     And I have "invoice_title" with "Pizza Invoice" in request body
+     And I have "products" with product
+     When I send PUT request
+     Then verify status code is 200
+
