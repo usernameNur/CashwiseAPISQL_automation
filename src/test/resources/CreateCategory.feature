@@ -1,6 +1,7 @@
+@regression
 Feature: user should be able to create a category
 
-  @createCategory
+  @createCategory @smoke
   Scenario: verify user successfully creates a category
     Given base url "https://backend.cashwise.us/api/myaccount"
     And I have access

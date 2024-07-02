@@ -9,7 +9,7 @@ import org.testng.annotations.DataProvider;
         plugin = "html:target/reports/cucumberReport.html",
         features = "src/test/resources",
         glue = "steps",
-        tags = "@createCategory",
+        tags = "@regression",
         dryRun = true
 
 )
@@ -19,4 +19,7 @@ public class CucumberRunner extends AbstractTestNGCucumberTests {
     public Object[][] scenarios() {
         return super.scenarios();
     }
+
+
 }
+//mvn test -Dcucumber.filter.tags="@createInvoice"      To run through terminal maven

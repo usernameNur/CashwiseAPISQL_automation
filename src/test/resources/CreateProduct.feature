@@ -1,3 +1,4 @@
+@regression
 Feature: creates a product
 
   Background:

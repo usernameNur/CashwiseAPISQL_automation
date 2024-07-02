@@ -1,9 +1,10 @@
+@regression
 Feature: creates a invoice
 
   Background:
     Given base url "https://backend.cashwise.us/api/myaccount"
 
-    @createInvoice
+    @createInvoice @smoke
   Scenario: user successfully creates invoice
     And I have access
     And I have the endpoint "/invoices"

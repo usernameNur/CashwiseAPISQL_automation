@@ -1,3 +1,4 @@
+@regression
 Feature: verify user can update a category
 
   Scenario: verify user successfully updates category_title

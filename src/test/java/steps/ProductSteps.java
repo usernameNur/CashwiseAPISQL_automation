@@ -15,6 +15,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.hamcrest.Matchers.equalTo;
 
@@ -166,4 +168,58 @@ public class ProductSteps {
 
 
     }
+
+
+
+    @Given("I have {string} with {string} as a query param")
+    public void i_have_with_as_a_query_param(String key, String value) {
+        request=request.queryParam(key, value);
+    }
+    @Given("I send GET request")
+    public void i_send_get_request() {
+        response=request.get();
+    }
+
+    @Then("verify the invoice details in the response match the database")
+    public void verify_the_invoice_details_in_the_response_match_the_database() throws SQLException {
+
+        HashMap dataFromAPI=new HashMap();
+        dataFromAPI.put("invoice_id",response.jsonPath().getString("invoice_id"));
+        dataFromAPI.put("invoice_title",response.jsonPath().getString("invoice_title"));
+        dataFromAPI.put("client_id",response.jsonPath().getString("client.client_id"));
+        dataFromAPI.put("client_name",response.jsonPath().getString("client.client_name"));
+        dataFromAPI.put("email",response.jsonPath().getString("client.email"));
+        dataFromAPI.put("phone_number",response.jsonPath().getString("client.phone_number"));
+
+        Connection connection=DBUtilities.getDBConnection();
+
+        PreparedStatement preparedStatement= connection.prepareStatement("select id, title, i.client_id, client_name, email, phone_number\n" +
+                "from  invoices i\n" +
+                "join clients c\n" +
+                "on i.client_id=c.client_id\n" +
+                "where id = ?");
+        preparedStatement.setInt(1, Integer.parseInt(id));
+        ResultSet resultSet= preparedStatement.executeQuery();
+
+        Map<String, String> dataFromDB=new HashMap<>();
+        while(resultSet.next()){
+            dataFromDB.put("invoice_id", resultSet.getString("id"));
+            dataFromDB.put("invoice_title",resultSet.getString("title"));
+            dataFromDB.put("client_id",resultSet.getString("client_id"));
+            dataFromDB.put("client_name",resultSet.getString("client_name"));
+            dataFromDB.put("email",resultSet.getString("email"));
+            dataFromDB.put("phone_number",resultSet.getString("phone_number"));
+
+        }
+
+        System.out.println("APIIIIII");
+        System.out.println(dataFromAPI);
+
+        System.out.println("DBBBBBBB");
+        System.out.println(dataFromDB);
+
+        Assert.assertEquals(dataFromAPI, dataFromDB);
+
+    }
+
 }
