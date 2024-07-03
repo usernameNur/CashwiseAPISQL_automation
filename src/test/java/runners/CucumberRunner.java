@@ -6,7 +6,7 @@ import io.cucumber.testng.CucumberOptions;
 import org.testng.annotations.DataProvider;
 
 @CucumberOptions(
-        plugin = "json:target/reports/cucumber.json",
+        plugin = {"html:target/cucumberReport.html","json:target/reports/cucumber.json"},
         features = "src/test/resources",
         glue = "steps",
         tags = "@regression",
