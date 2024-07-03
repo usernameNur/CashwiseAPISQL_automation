@@ -1,6 +1,5 @@
 package steps;
 
-import com.sun.net.httpserver.Request;
 import io.cucumber.java.en.*;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -22,8 +21,6 @@ import static org.hamcrest.Matchers.equalTo;
 
 public class ProductSteps {
     String id;
-
-
     RequestSpecification request;
     Response response;
     String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJleHAiOjE3MjE5MjE4MTgsImlhdCI6MTcxOTMyOTgxOCwidXNlcm5hbWUiOiJxYXRlc3RlckBnbWFpbC5jb20ifQ.fv8GVvDXSsaJ-VZTQHjXem6QcqWI5gerLvuDAsRPShkF8Xnu7pkSJF4hUp7W70sB6-JeJQu_Bo8OuFxyBWhYew";
